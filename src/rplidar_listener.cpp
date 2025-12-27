@@ -12,9 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <math.h>
-
-#include <functional>
 #include <memory>
 #include <string>
 
@@ -30,9 +27,9 @@ public:
   {
     subscription_ =
       this->create_subscription<sensor_msgs::msg::LaserScan>(
-        "scan", 10,
-        [this](sensor_msgs::msg::LaserScan::ConstSharedPtr scan)
-        {return this->scan_callback(scan);});
+          "scan", 10,
+          [this](sensor_msgs::msg::LaserScan::ConstSharedPtr scan)
+          {return this->scan_callback(scan);});
   }
 
 private:
@@ -43,13 +40,13 @@ private:
     RCLCPP_INFO(this->get_logger(), "New scan: %s[%d]", scan->header.frame_id.c_str(), count);
     RCLCPP_INFO(this->get_logger(), " scan time: [%f]", scan->scan_time);
     RCLCPP_INFO(this->get_logger(), " angle range: [%f, %f]",
-                RAD2DEG(scan->angle_min), RAD2DEG(scan->angle_max));
+                                    RAD2DEG(scan->angle_min), RAD2DEG(scan->angle_max));
     RCLCPP_INFO(this->get_logger(), " angle increment: [%f]", RAD2DEG(scan->angle_increment));
 
     for (int i = 0; i < count; i++) {
       float degree = RAD2DEG(scan->angle_min + (scan->angle_increment * i));
       RCLCPP_INFO(this->get_logger(), " angle-distance-intensity : [%f, %f, %f]",
-                  degree, scan->ranges[i], scan->intensities[i]);
+                                      degree, scan->ranges[i], scan->intensities[i]);
     }
   }
 
