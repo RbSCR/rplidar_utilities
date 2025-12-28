@@ -9,6 +9,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(rplidar_sdk_ros2)
 
 # rplidar_listener
 add_executable(rplidar_listener src/rplidar_listener.cpp)
@@ -25,7 +26,7 @@ add_executable(rplidar_info src/rplidar_info.cpp)
 ament_target_dependencies(
   rplidar_info
   "rclcpp"
-  "sensor_msgs"
+  "rplidar_sdk_ros2"
 )
 install(TARGETS rplidar_info
   DESTINATION lib/${PROJECT_NAME})

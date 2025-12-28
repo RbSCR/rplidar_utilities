@@ -3,7 +3,7 @@
 <package format="3">
   <name>rplidar_utilities</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>A ROS2 node with utility functionalities for a SLAMTEC LIDAR</description>
   <maintainer email="6249544+RbSCR@users.noreply.github.com">rbscr</maintainer>
   <license>Apache-2.0</license>
 
@@ -11,6 +11,8 @@
 
   <depend>rclcpp</depend>
   <depend>rplidar_sdk_ros2</depend>
+
+  <exec_depend>rviz</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
