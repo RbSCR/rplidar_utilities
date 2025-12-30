@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <math.h>
+
 #include <memory>
 #include <string>
 
@@ -25,11 +27,14 @@ class RplidarListener : public rclcpp::Node
 public:
   RplidarListener() : Node("rplidar_listener")
   {
-    subscription_ =
-      this->create_subscription<sensor_msgs::msg::LaserScan>(
-          "scan", 10,
-          [this](sensor_msgs::msg::LaserScan::ConstSharedPtr scan)
-          {return this->scan_callback(scan);});
+    auto param_desc_topic_name = rcl_interfaces::msg::ParameterDescriptor{};
+    param_desc_topic_name.description = "Topic name of Laserscan message to subscribe to.";
+    topic_name_ = this->declare_parameter("topic_name", "scan", param_desc_topic_name);
+
+    subscription_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
+                      topic_name_, 10,
+                      [this](sensor_msgs::msg::LaserScan::ConstSharedPtr scan)
+                        {return this->scan_callback(scan);});
   }
 
 private:
@@ -50,6 +55,7 @@ private:
     }
   }
 
+  std::string topic_name_;
   std::shared_ptr<rclcpp::Subscription<sensor_msgs::msg::LaserScan>> subscription_;
 };
 
