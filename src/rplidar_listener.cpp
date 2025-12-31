@@ -32,7 +32,7 @@ public:
     topic_name_ = this->declare_parameter("topic_name", "scan", param_desc_topic_name);
 
     subscription_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
-                      topic_name_, 10,
+                      topic_name_, rclcpp::SensorDataQoS(),
                       [this](sensor_msgs::msg::LaserScan::ConstSharedPtr scan)
                         {return this->scan_callback(scan);});
   }
