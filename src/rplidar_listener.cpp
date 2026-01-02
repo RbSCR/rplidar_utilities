@@ -43,8 +43,9 @@ private:
     int count = scan->scan_time / scan->time_increment;
 
     RCLCPP_INFO(this->get_logger(), "New scan: %s[%d]", scan->header.frame_id.c_str(), count);
-    RCLCPP_INFO(this->get_logger(), " scan time: [%f]", scan->scan_time);
-    RCLCPP_INFO(this->get_logger(), " angle range: [%f, %f]",
+    RCLCPP_INFO(this->get_logger(), " scan time      : [%f]", scan->scan_time);
+    RCLCPP_INFO(this->get_logger(), " min-max range  : [%f, %f]", scan->range_min, scan->range_max);
+    RCLCPP_INFO(this->get_logger(), " angle range    : [%f, %f]",
                                     RAD2DEG(scan->angle_min), RAD2DEG(scan->angle_max));
     RCLCPP_INFO(this->get_logger(), " angle increment: [%f]", RAD2DEG(scan->angle_increment));
 
