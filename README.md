@@ -40,9 +40,10 @@ Or
 ros2 launch rplidar_utilities rplidar_listener_launch.py
 ```
 
-Node parameter:
+Node parameters:
 
 - topic_name  (default = 'scan')
+- skip_ranges (default = 'false')
 
 ## View 'scan' messages in rviz
 

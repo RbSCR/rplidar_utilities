@@ -29,7 +29,12 @@ public:
   {
     auto param_desc_topic_name = rcl_interfaces::msg::ParameterDescriptor{};
     param_desc_topic_name.description = "Topic name of Laserscan message to subscribe to.";
-    topic_name_ = this->declare_parameter("topic_name", "scan", param_desc_topic_name);
+    topic_name_ = this->declare_parameter<std::string>("topic_name", "scan", param_desc_topic_name);
+
+    auto param_desc_skip_ranges = rcl_interfaces::msg::ParameterDescriptor{};
+    param_desc_skip_ranges.description =
+        "Skip output of all range-values. Only header info will be displayed.";
+    skip_ranges_ = this->declare_parameter<bool>("skip_ranges", false, param_desc_skip_ranges);
 
     subscription_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
                       topic_name_, rclcpp::SensorDataQoS(),
@@ -40,23 +45,27 @@ public:
 private:
   void scan_callback(sensor_msgs::msg::LaserScan::ConstSharedPtr scan)
   {
-    int count = scan->scan_time / scan->time_increment;
+    int size = scan->ranges.size();
 
-    RCLCPP_INFO(this->get_logger(), "New scan: %s[%d]", scan->header.frame_id.c_str(), count);
+    RCLCPP_INFO(this->get_logger(), "New scan: [%s]", scan->header.frame_id.c_str());
     RCLCPP_INFO(this->get_logger(), " scan time      : [%f]", scan->scan_time);
     RCLCPP_INFO(this->get_logger(), " min-max range  : [%f, %f]", scan->range_min, scan->range_max);
     RCLCPP_INFO(this->get_logger(), " angle range    : [%f, %f]",
                                     RAD2DEG(scan->angle_min), RAD2DEG(scan->angle_max));
     RCLCPP_INFO(this->get_logger(), " angle increment: [%f]", RAD2DEG(scan->angle_increment));
+    RCLCPP_INFO(this->get_logger(), " ranges count   : [%d]", size);
 
-    for (int i = 0; i < count; i++) {
-      float degree = RAD2DEG(scan->angle_min + (scan->angle_increment * i));
-      RCLCPP_INFO(this->get_logger(), " angle-distance-intensity : [%f, %f, %f]",
-                                      degree, scan->ranges[i], scan->intensities[i]);
+    if (!skip_ranges_) {
+      for (int i = 0; i < size; i++) {
+        float degree = RAD2DEG(scan->angle_min + (scan->angle_increment * i));
+        RCLCPP_INFO(this->get_logger(), " angle-distance-intensity : [%f, %f, %f]",
+                                        degree, scan->ranges[i], scan->intensities[i]);
+      }
     }
   }
 
   std::string topic_name_;
+  bool skip_ranges_;
   std::shared_ptr<rclcpp::Subscription<sensor_msgs::msg::LaserScan>> subscription_;
 };
 
