@@ -3,7 +3,6 @@
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-# #from launch.actions import LogInfo
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
@@ -28,6 +27,6 @@ def generate_launch_description():
             executable='rplidar_listener',
             name='rplidar_listener',
             parameters=[{'topic_name': topic_name,
-                         'skip_ranges':skip_ranges}],
+                         'skip_ranges': skip_ranges}],
             output='screen'),
     ])
