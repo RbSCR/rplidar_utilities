@@ -206,7 +206,6 @@ bool checkRPLIDARHealth(ILidarDriver *drv)
         return false;
       }
     } else {
-      // TODO(rbscr) refactor to function 'get_op_result_mnememonic'
       std::string op_mnemonic;
       switch (op_result)
       {
@@ -273,7 +272,6 @@ bool getRPLIDARScanmodes(ILidarDriver *drv)
       return true;
 
     } else {
-      // TODO(rbscr) refactor to function 'get_op_result_mnememonic'
       std::string op_mnemonic;
       switch (op_result)
       {
@@ -329,7 +327,6 @@ bool getRPLIDARTypicalScanmode(ILidarDriver *drv)
       return true;
 
     } else {
-      // TODO(rbscr) refactor to function 'get_op_result_mnememonic'
       std::string op_mnemonic;
       switch (op_result)
       {
@@ -385,7 +382,6 @@ bool getRPLIDARModelnameDescription(ILidarDriver *drv)
       return true;
 
     } else {
-      // TODO(rbscr) refactor to function 'get_op_result_mnememonic'
       std::string op_mnemonic;
       switch (op_result)
       {
@@ -459,7 +455,6 @@ bool getRPLIDARMotorInfo(ILidarDriver *drv)
                                       (int)motorinfo.motorCtrlSupport, support_mnemonic.c_str());
        return true;
     } else {
-      // TODO(rbscr) refactor to function 'get_op_result_mnememonic'
       std::string op_mnemonic;
       switch (op_result)
       {
