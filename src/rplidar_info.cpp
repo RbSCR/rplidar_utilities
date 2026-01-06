@@ -48,25 +48,25 @@ int do_work()
     }
 
     IChannel* _channel;
-    if(channel_type_ == "tcp") {
-        _channel = *createTcpChannel(tcp_ip_, tcp_port_);
-    } else if(channel_type_ == "udp") {
-      _channel = *createUdpChannel(udp_ip_, udp_port_);
+    if(param_.channel_type == "tcp") {
+        _channel = *createTcpChannel(param_.tcp_ip, param_.tcp_port);
+    } else if(param_.channel_type == "udp") {
+      _channel = *createUdpChannel(param_.udp_ip, param_.udp_port);
     } else {
-      _channel = *createSerialPortChannel(serial_port_, serial_baudrate_);
+      _channel = *createSerialPortChannel(param_.serial_port, param_.serial_baudrate);
         }
     if (SL_IS_FAIL((drv_)->connect(_channel))) {
-      if(channel_type_ == "tcp"){
+      if(param_.channel_type == "tcp"){
         RCLCPP_ERROR(this->get_logger(),
           "Error, cannot connect to the ip addr %s with the tcp port %s.",
-          tcp_ip_.c_str(), std::to_string(tcp_port_).c_str());
-      } else if(channel_type_ == "udp") {
+          param_.tcp_ip.c_str(), std::to_string(param_.tcp_port).c_str());
+      } else if(param_.channel_type == "udp") {
         RCLCPP_ERROR(this->get_logger(),
           "Error, cannot connect to the ip addr  %s with the udp port %s.",
-          udp_ip_.c_str(), std::to_string(udp_port_).c_str());
+          param_.udp_ip.c_str(), std::to_string(param_.udp_port).c_str());
       } else {
         RCLCPP_ERROR(this->get_logger(), "Error, cannot bind to the specified serial port %s.",
-                                          serial_port_.c_str());
+                                          param_.serial_port.c_str());
       }
       delete drv_; drv_ = nullptr;
       return -1;
@@ -122,18 +122,17 @@ void init_param()
     this->declare_parameter<int>("tcp_port", 20108);
     this->declare_parameter<std::string>("udp_ip", "192.168.11.2");
     this->declare_parameter<int>("udp_port", 8089);
-    this->declare_parameter<std::string>("serial_port", "/dev/ttyUSB0");
+    this->declare_parameter<std::string>("serial_port", "/dev/rplidar");
     this->declare_parameter<int>("serial_baudrate", 460800);  // default for C1
-    this->declare_parameter<std::string>("scan_mode", std::string());
+    //  see respective datasheets for other types
 
-    this->get_parameter_or<std::string>("channel_type", channel_type_, "serial");
-    this->get_parameter_or<std::string>("tcp_ip", tcp_ip_, "192.168.0.7");
-    this->get_parameter_or<int>("tcp_port", tcp_port_, 20108);
-    this->get_parameter_or<std::string>("udp_ip", udp_ip_, "192.168.11.2");
-    this->get_parameter_or<int>("udp_port", udp_port_, 8089);
-    this->get_parameter_or<std::string>("serial_port", serial_port_, "/dev/ttyUSB0");
-    this->get_parameter_or<int>("serial_baudrate", serial_baudrate_, 460800);
-    // default baudrate for C1, see respective datasheets for other types
+    this->get_parameter("channel_type", param_.channel_type);
+    this->get_parameter("tcp_ip", param_.tcp_ip);
+    this->get_parameter("tcp_port", param_.tcp_port);
+    this->get_parameter("udp_ip", param_.udp_ip);
+    this->get_parameter("udp_port", param_.udp_port);
+    this->get_parameter("serial_port", param_.serial_port);
+    this->get_parameter("serial_baudrate", param_.serial_baudrate);
   }
 
 bool getRPLIDARDeviceInfo(ILidarDriver *drv)
@@ -501,13 +500,15 @@ bool getRPLIDARMotorInfo(ILidarDriver *drv)
     }
   }
 
-  std::string channel_type_;
-  std::string tcp_ip_;
-  std::string udp_ip_;
-  std::string serial_port_;
-  int tcp_port_ = 20108;
-  int udp_port_ = 8089;
-  int serial_baudrate_ = 460800;
+  struct Parameters {
+    std::string channel_type;
+    std::string tcp_ip;
+    int tcp_port = 20108;
+    std::string udp_ip;
+    int udp_port = 8089;
+    std::string serial_port;
+    int serial_baudrate = 460800;
+  } param_;
 
   ILidarDriver *drv_ = nullptr;
 };
