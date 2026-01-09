@@ -10,7 +10,19 @@ Provides:
 
 The nodes use the 'rplidar_sdk_ros2' package, which provides the public SDK of RPLIDAR products in C++ as a ROS package.
 
-## Run rplidar_info
+## rplidar_info
+
+### Parameters
+
+- channel_type : Specifying channel type of lidar - (string, default = 'serial')
+- tcp_ip : Specifying tcp ip to the connected lidar - (string, default = '192.168.0.7');
+- tcp_port : Specifying tcp port to the connected lidar - (int, default = 20108);
+- upp_ip : Specifying udp ip to the connected lidar - (string, default = '192.168.11.2');
+- udp_port : Specifying usb port to the connected lidar - (int, default = 8089);
+- serial_port : Specifying usb port to connected lidar - (string, default = '/dev/ttyUSB0')
+- serial_baudrate : Specifying usb port baudrate to connected lidar - (int, default = 460800)
+
+### Run rplidar_info
 
 ```bash
 ros2 run rplidar_utilities rplidar_info [parameters ...]
@@ -22,16 +34,21 @@ Or with the launch-file (for a RPLIDAR C1):
 ros2 launch rplidar_utilities rplidar_info_c1_launch.py
 ```
 
-Node parameters:
+## rplidar_listener
 
-- channel_type (default = 'serial')
-- serial_port (default = '/dev/ttyUSB0')
-- serial_baudrate (default = '460800')
+## Subscribes
 
-## Run rplidar_listener
+- /scan  (sensor_msgs/msg/LaserScan)
+
+## Parameters
+
+- topic_name : Specifying topic name of LaserScan message - (string, default = 'scan')
+- skip_ranges : Skip output of all range-values. Only header info will be displayed - (bool, default = 'false')
+
+### Run rplidar_listener
 
 ```bash
-ros2 run rplidar_utilities rplidar_listener
+ros2 run rplidar_utilities rplidar_listener  [parameters ...]
 ```
 
 Or
@@ -39,11 +56,6 @@ Or
 ```bash
 ros2 launch rplidar_utilities rplidar_listener_launch.py
 ```
-
-Node parameters:
-
-- topic_name  (default = 'scan')
-- skip_ranges (default = 'false')
 
 ## View 'scan' messages in rviz
 
