@@ -49,14 +49,14 @@ int do_work()
 
     IChannel* _channel;
     if(param_.channel_type == "tcp") {
-        _channel = *createTcpChannel(param_.tcp_ip, param_.tcp_port);
+      _channel = *createTcpChannel(param_.tcp_ip, param_.tcp_port);
     } else if(param_.channel_type == "udp") {
       _channel = *createUdpChannel(param_.udp_ip, param_.udp_port);
     } else {
       _channel = *createSerialPortChannel(param_.serial_port, param_.serial_baudrate);
         }
     if (SL_IS_FAIL((drv_)->connect(_channel))) {
-      if(param_.channel_type == "tcp"){
+      if(param_.channel_type == "tcp") {
         RCLCPP_ERROR(this->get_logger(),
           "Error, cannot connect to the ip addr %s with the tcp port %s.",
           param_.tcp_ip.c_str(), std::to_string(param_.tcp_port).c_str());
@@ -141,10 +141,8 @@ bool getRPLIDARDeviceInfo(ILidarDriver *drv)
     sl_lidar_response_device_info_t devinfo;
 
     op_result = drv->getDeviceInfo(devinfo);
-    if (SL_IS_FAIL(op_result))
-    {
-      if (op_result == SL_RESULT_OPERATION_TIMEOUT)
-      {
+    if (SL_IS_FAIL(op_result)) {
+      if (op_result == SL_RESULT_OPERATION_TIMEOUT) {
         RCLCPP_ERROR(this->get_logger(),
                      "Error, operation time out. SL_RESULT_OPERATION_TIMEOUT! ");
       } else {
@@ -156,8 +154,7 @@ bool getRPLIDARDeviceInfo(ILidarDriver *drv)
 
     // print out the device info
     char sn_str[37] = {'\0'};
-    for (int pos = 0; pos < 16; ++pos)
-    {
+    for (int pos = 0; pos < 16; ++pos) {
       snprintf(sn_str + (pos * 2), 3, "%02X", devinfo.serialnum[pos]); // NOLINT(*)
       // NOLINT to prevent linting in cpplint:
       //    "If you can, use sizeof(sn_str + (pos * 2)) instead of 3 as the 2nd arg to snprintf."
@@ -180,65 +177,62 @@ bool checkRPLIDARHealth(ILidarDriver *drv)
     sl_result op_result;
     sl_lidar_response_device_health_t healthinfo;
     op_result = drv->getHealth(healthinfo);
-    if (SL_IS_OK(op_result))
-    {
+    if (SL_IS_OK(op_result)) {
       RCLCPP_INFO(this->get_logger(), "-- Health  --");
       RCLCPP_INFO(this->get_logger(), "health status : %d", healthinfo.status);
 
-      switch (healthinfo.status)
-      {
-      case SL_LIDAR_STATUS_OK:
-        RCLCPP_INFO(this->get_logger(), "              : OK.");
-        return true;
+      switch (healthinfo.status) {
+        case SL_LIDAR_STATUS_OK:
+          RCLCPP_INFO(this->get_logger(), "              : OK.");
+          return true;
 
-      case SL_LIDAR_STATUS_WARNING:
-        RCLCPP_INFO(this->get_logger(), "             : Warning.");
-        return true;
+        case SL_LIDAR_STATUS_WARNING:
+          RCLCPP_INFO(this->get_logger(), "             : Warning.");
+          return true;
 
-      case SL_LIDAR_STATUS_ERROR:
-        RCLCPP_ERROR(this->get_logger(),
-                     "Error, RPLidar internal error detected. Please reboot the device to retry.");
-        return false;
+        case SL_LIDAR_STATUS_ERROR:
+          RCLCPP_ERROR(this->get_logger(),
+                      "Error, RPLidar internal error detected. Please reboot the device to retry.");
+          return false;
 
-      default:
-        RCLCPP_ERROR(this->get_logger(),
-                     "Error, Unknown internal error detected. Please reboot the device to retry.");
-        return false;
+        default:
+          RCLCPP_ERROR(this->get_logger(),
+                      "Error, Unknown internal error detected. Please reboot the device to retry.");
+          return false;
       }
     } else {
       std::string op_mnemonic;
-      switch (op_result)
-      {
-      case SL_RESULT_FAIL_BIT:
-        op_mnemonic = "FailBit";
+      switch (op_result) {
+        case SL_RESULT_FAIL_BIT:
+          op_mnemonic = "FailBit";
+          break;
+        case SL_RESULT_ALREADY_DONE:
+          op_mnemonic = "AlreadyDone";
         break;
-      case SL_RESULT_ALREADY_DONE:
-        op_mnemonic = "AlreadyDone";
-      break;
-        case SL_RESULT_INVALID_DATA:
-        op_mnemonic = "InvalidData";
-        break;
-      case SL_RESULT_OPERATION_FAIL :
-        op_mnemonic = "OperationFail";
-        break;
-      case SL_RESULT_OPERATION_TIMEOUT:
-        op_mnemonic = "OperationTimeout";
-        break;
-      case SL_RESULT_OPERATION_STOP:
-        op_mnemonic = "OperationStop";
-        break;
-      case SL_RESULT_OPERATION_NOT_SUPPORT:
-        op_mnemonic = "OperationNotSupport";
-        break;
-      case SL_RESULT_FORMAT_NOT_SUPPORT :
-        op_mnemonic = "FormatNotSupport";
-        break;
-      case SL_RESULT_INSUFFICIENT_MEMORY:
-        op_mnemonic = "InsufficientMemory";
-        break;
-      default:
-        op_mnemonic = "Unknown";
-        break;
+          case SL_RESULT_INVALID_DATA:
+          op_mnemonic = "InvalidData";
+          break;
+        case SL_RESULT_OPERATION_FAIL:
+          op_mnemonic = "OperationFail";
+          break;
+        case SL_RESULT_OPERATION_TIMEOUT:
+          op_mnemonic = "OperationTimeout";
+          break;
+        case SL_RESULT_OPERATION_STOP:
+          op_mnemonic = "OperationStop";
+          break;
+        case SL_RESULT_OPERATION_NOT_SUPPORT:
+          op_mnemonic = "OperationNotSupport";
+          break;
+        case SL_RESULT_FORMAT_NOT_SUPPORT:
+          op_mnemonic = "FormatNotSupport";
+          break;
+        case SL_RESULT_INSUFFICIENT_MEMORY:
+          op_mnemonic = "InsufficientMemory";
+          break;
+        default:
+          op_mnemonic = "Unknown";
+          break;
       }
       RCLCPP_ERROR(this->get_logger(),
           "Error, cannot retrieve RPLidar health code: %x [%s]", op_result, op_mnemonic.c_str());
@@ -273,38 +267,37 @@ bool getRPLIDARScanmodes(ILidarDriver *drv)
 
     } else {
       std::string op_mnemonic;
-      switch (op_result)
-      {
-      case SL_RESULT_FAIL_BIT:
-        op_mnemonic = "FailBit";
+      switch (op_result) {
+        case SL_RESULT_FAIL_BIT:
+          op_mnemonic = "FailBit";
+          break;
+        case SL_RESULT_ALREADY_DONE:
+          op_mnemonic = "AlreadyDone";
         break;
-      case SL_RESULT_ALREADY_DONE:
-        op_mnemonic = "AlreadyDone";
-      break;
-        case SL_RESULT_INVALID_DATA:
-        op_mnemonic = "InvalidData";
-        break;
-      case SL_RESULT_OPERATION_FAIL :
-        op_mnemonic = "OperationFail";
-        break;
-      case SL_RESULT_OPERATION_TIMEOUT:
-        op_mnemonic = "OperationTimeout";
-        break;
-      case SL_RESULT_OPERATION_STOP:
-        op_mnemonic = "OperationStop";
-        break;
-      case SL_RESULT_OPERATION_NOT_SUPPORT:
-        op_mnemonic = "OperationNotSupport";
-        break;
-      case SL_RESULT_FORMAT_NOT_SUPPORT :
-        op_mnemonic = "FormatNotSupport";
-        break;
-      case SL_RESULT_INSUFFICIENT_MEMORY:
-        op_mnemonic = "InsufficientMemory";
-        break;
-      default:
-        op_mnemonic = "Unknown";
-        break;
+          case SL_RESULT_INVALID_DATA:
+          op_mnemonic = "InvalidData";
+          break;
+        case SL_RESULT_OPERATION_FAIL:
+          op_mnemonic = "OperationFail";
+          break;
+        case SL_RESULT_OPERATION_TIMEOUT:
+          op_mnemonic = "OperationTimeout";
+          break;
+        case SL_RESULT_OPERATION_STOP:
+          op_mnemonic = "OperationStop";
+          break;
+        case SL_RESULT_OPERATION_NOT_SUPPORT:
+          op_mnemonic = "OperationNotSupport";
+          break;
+        case SL_RESULT_FORMAT_NOT_SUPPORT:
+          op_mnemonic = "FormatNotSupport";
+          break;
+        case SL_RESULT_INSUFFICIENT_MEMORY:
+          op_mnemonic = "InsufficientMemory";
+          break;
+        default:
+          op_mnemonic = "Unknown";
+          break;
       }
       RCLCPP_ERROR(this->get_logger(),
           "Error, cannot retrieve RPLidar all supported scanmodes: %x [%s]",
@@ -323,43 +316,40 @@ bool getRPLIDARTypicalScanmode(ILidarDriver *drv)
     {
       RCLCPP_INFO(this->get_logger(), "-- Typical scanmode  --");
       RCLCPP_INFO(this->get_logger(), "mode id: %x (see above for name)", scanmode);
-
       return true;
-
     } else {
       std::string op_mnemonic;
-      switch (op_result)
-      {
-      case SL_RESULT_FAIL_BIT:
-        op_mnemonic = "FailBit";
+      switch (op_result) {
+        case SL_RESULT_FAIL_BIT:
+          op_mnemonic = "FailBit";
+          break;
+        case SL_RESULT_ALREADY_DONE:
+          op_mnemonic = "AlreadyDone";
         break;
-      case SL_RESULT_ALREADY_DONE:
-        op_mnemonic = "AlreadyDone";
-      break;
-        case SL_RESULT_INVALID_DATA:
-        op_mnemonic = "InvalidData";
-        break;
-      case SL_RESULT_OPERATION_FAIL :
-        op_mnemonic = "OperationFail";
-        break;
-      case SL_RESULT_OPERATION_TIMEOUT:
-        op_mnemonic = "OperationTimeout";
-        break;
-      case SL_RESULT_OPERATION_STOP:
-        op_mnemonic = "OperationStop";
-        break;
-      case SL_RESULT_OPERATION_NOT_SUPPORT:
-        op_mnemonic = "OperationNotSupport";
-        break;
-      case SL_RESULT_FORMAT_NOT_SUPPORT :
-        op_mnemonic = "FormatNotSupport";
-        break;
-      case SL_RESULT_INSUFFICIENT_MEMORY:
-        op_mnemonic = "InsufficientMemory";
-        break;
-      default:
-        op_mnemonic = "Unknown";
-        break;
+          case SL_RESULT_INVALID_DATA:
+          op_mnemonic = "InvalidData";
+          break;
+        case SL_RESULT_OPERATION_FAIL:
+          op_mnemonic = "OperationFail";
+          break;
+        case SL_RESULT_OPERATION_TIMEOUT:
+          op_mnemonic = "OperationTimeout";
+          break;
+        case SL_RESULT_OPERATION_STOP:
+          op_mnemonic = "OperationStop";
+          break;
+        case SL_RESULT_OPERATION_NOT_SUPPORT:
+          op_mnemonic = "OperationNotSupport";
+          break;
+        case SL_RESULT_FORMAT_NOT_SUPPORT:
+          op_mnemonic = "FormatNotSupport";
+          break;
+        case SL_RESULT_INSUFFICIENT_MEMORY:
+          op_mnemonic = "InsufficientMemory";
+          break;
+        default:
+          op_mnemonic = "Unknown";
+          break;
       }
       RCLCPP_ERROR(this->get_logger(),
           "Error, cannot retrieve RPLidar typical scanmode: %x [%s]",
@@ -383,38 +373,37 @@ bool getRPLIDARModelnameDescription(ILidarDriver *drv)
 
     } else {
       std::string op_mnemonic;
-      switch (op_result)
-      {
-      case SL_RESULT_FAIL_BIT:
-        op_mnemonic = "FailBit";
+      switch (op_result) {
+        case SL_RESULT_FAIL_BIT:
+          op_mnemonic = "FailBit";
+          break;
+        case SL_RESULT_ALREADY_DONE:
+          op_mnemonic = "AlreadyDone";
         break;
-      case SL_RESULT_ALREADY_DONE:
-        op_mnemonic = "AlreadyDone";
-      break;
-        case SL_RESULT_INVALID_DATA:
-        op_mnemonic = "InvalidData";
-        break;
-      case SL_RESULT_OPERATION_FAIL :
-        op_mnemonic = "OperationFail";
-        break;
-      case SL_RESULT_OPERATION_TIMEOUT:
-        op_mnemonic = "OperationTimeout";
-        break;
-      case SL_RESULT_OPERATION_STOP:
-        op_mnemonic = "OperationStop";
-        break;
-      case SL_RESULT_OPERATION_NOT_SUPPORT:
-        op_mnemonic = "OperationNotSupport";
-        break;
-      case SL_RESULT_FORMAT_NOT_SUPPORT :
-        op_mnemonic = "FormatNotSupport";
-        break;
-      case SL_RESULT_INSUFFICIENT_MEMORY:
-        op_mnemonic = "InsufficientMemory";
-        break;
-      default:
-        op_mnemonic = "Unknown";
-        break;
+          case SL_RESULT_INVALID_DATA:
+          op_mnemonic = "InvalidData";
+          break;
+        case SL_RESULT_OPERATION_FAIL:
+          op_mnemonic = "OperationFail";
+          break;
+        case SL_RESULT_OPERATION_TIMEOUT:
+          op_mnemonic = "OperationTimeout";
+          break;
+        case SL_RESULT_OPERATION_STOP:
+          op_mnemonic = "OperationStop";
+          break;
+        case SL_RESULT_OPERATION_NOT_SUPPORT:
+          op_mnemonic = "OperationNotSupport";
+          break;
+        case SL_RESULT_FORMAT_NOT_SUPPORT:
+          op_mnemonic = "FormatNotSupport";
+          break;
+        case SL_RESULT_INSUFFICIENT_MEMORY:
+          op_mnemonic = "InsufficientMemory";
+          break;
+        default:
+          op_mnemonic = "Unknown";
+          break;
       }
       RCLCPP_ERROR(this->get_logger(),
           "Error, cannot retrieve RPLidar typical scanmode: %x [%s]",
@@ -436,58 +425,56 @@ bool getRPLIDARMotorInfo(ILidarDriver *drv)
       RCLCPP_INFO(this->get_logger(), "minimum speed     : %d", (int)motorinfo.min_speed);
       RCLCPP_INFO(this->get_logger(), "maximum speed     : %d", (int)motorinfo.max_speed);
       std::string support_mnemonic;
-      switch (motorinfo.motorCtrlSupport)
-      {
-      case MotorCtrlSupportNone:
-        support_mnemonic = "None";
-        break;
-      case MotorCtrlSupportPwm:
-        support_mnemonic = "Pwm";
-        break;
-      case MotorCtrlSupportRpm:
-        support_mnemonic = "Rpm";
-        break;
-      default:
-        support_mnemonic = "Unknown";
-        break;
+      switch (motorinfo.motorCtrlSupport) {
+        case MotorCtrlSupportNone:
+          support_mnemonic = "None";
+          break;
+        case MotorCtrlSupportPwm:
+          support_mnemonic = "Pwm";
+          break;
+        case MotorCtrlSupportRpm:
+          support_mnemonic = "Rpm";
+          break;
+        default:
+          support_mnemonic = "Unknown";
+          break;
       }
       RCLCPP_INFO(this->get_logger(), "motor ctrl support: %d [%s]",
                                       (int)motorinfo.motorCtrlSupport, support_mnemonic.c_str());
        return true;
     } else {
       std::string op_mnemonic;
-      switch (op_result)
-      {
-      case SL_RESULT_FAIL_BIT:
-        op_mnemonic = "FailBit";
+      switch (op_result) {
+        case SL_RESULT_FAIL_BIT:
+          op_mnemonic = "FailBit";
+          break;
+        case SL_RESULT_ALREADY_DONE:
+          op_mnemonic = "AlreadyDone";
         break;
-      case SL_RESULT_ALREADY_DONE:
-        op_mnemonic = "AlreadyDone";
-      break;
-        case SL_RESULT_INVALID_DATA:
-        op_mnemonic = "InvalidData";
-        break;
-      case SL_RESULT_OPERATION_FAIL :
-        op_mnemonic = "OperationFail";
-        break;
-      case SL_RESULT_OPERATION_TIMEOUT:
-        op_mnemonic = "OperationTimeout";
-        break;
-      case SL_RESULT_OPERATION_STOP:
-        op_mnemonic = "OperationStop";
-        break;
-      case SL_RESULT_OPERATION_NOT_SUPPORT:
-        op_mnemonic = "OperationNotSupport";
-        break;
-      case SL_RESULT_FORMAT_NOT_SUPPORT :
-        op_mnemonic = "FormatNotSupport";
-        break;
-      case SL_RESULT_INSUFFICIENT_MEMORY:
-        op_mnemonic = "InsufficientMemory";
-        break;
-      default:
-        op_mnemonic = "Unknown";
-        break;
+          case SL_RESULT_INVALID_DATA:
+          op_mnemonic = "InvalidData";
+          break;
+        case SL_RESULT_OPERATION_FAIL:
+          op_mnemonic = "OperationFail";
+          break;
+        case SL_RESULT_OPERATION_TIMEOUT:
+          op_mnemonic = "OperationTimeout";
+          break;
+        case SL_RESULT_OPERATION_STOP:
+          op_mnemonic = "OperationStop";
+          break;
+        case SL_RESULT_OPERATION_NOT_SUPPORT:
+          op_mnemonic = "OperationNotSupport";
+          break;
+        case SL_RESULT_FORMAT_NOT_SUPPORT:
+          op_mnemonic = "FormatNotSupport";
+          break;
+        case SL_RESULT_INSUFFICIENT_MEMORY:
+          op_mnemonic = "InsufficientMemory";
+          break;
+        default:
+          op_mnemonic = "Unknown";
+          break;
       }
       RCLCPP_ERROR(this->get_logger(),
           "Error, cannot retrieve RPLidar motor info: %x [%s]", op_result, op_mnemonic.c_str());

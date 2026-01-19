@@ -20,7 +20,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/laser_scan.hpp"
 
-#define RAD2DEG(x) ((x)*180./M_PI)
+#define RAD2DEG(x) ((x) * 180. / M_PI)
 
 class RplidarListener : public rclcpp::Node
 {
@@ -33,7 +33,7 @@ public:
 
     auto param_desc_skip_ranges = rcl_interfaces::msg::ParameterDescriptor{};
     param_desc_skip_ranges.description =
-        "Skip output of all range-values. Only header info will be displayed.";
+      "Skip output of all range-values. Only header info will be displayed.";
     skip_ranges_ = this->declare_parameter<bool>("skip_ranges", false, param_desc_skip_ranges);
 
     subscription_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
