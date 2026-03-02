@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>rplidar_utilities</name>
@@ -11,8 +11,9 @@
 
   <depend>rclcpp</depend>
   <depend>rplidar_sdk_ros2</depend>
+  <depend>sensor_msgs</depend>
 
-  <exec_depend>rviz</exec_depend>
+  <exec_depend>rviz2</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

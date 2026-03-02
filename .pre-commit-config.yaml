@@ -1,11 +1,28 @@
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.2.0
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
     hooks:
-    -   id: check-added-large-files
-    -   id: trailing-whitespace
+      - id: check-added-large-files
+      - id: trailing-whitespace
         exclude_types: [rst]
-    -   id: end-of-file-fixer
-    -   id: check-yaml
-    -   id: end-of-file-fixer
-    -   id: mixed-line-ending
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: mixed-line-ending
+
+  # Cmake hooks
+  - repo: local
+    hooks:
+      - id: ament_lint_cmake
+        name: ament_lint_cmake
+        description: Check format of CMakeLists.txt files.
+        entry: ament_lint_cmake
+        language: system
+        files: CMakeLists\.txt$
+
+  # Package XML
+  - repo: https://github.com/Joschi3/package_xml_validation.git
+    rev: v1.4.2
+    hooks:
+      - id: format-package-xml
+        name: Validate and Format package.xml
+        exclude: ^third_party/
