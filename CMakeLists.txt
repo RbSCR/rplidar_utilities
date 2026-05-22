@@ -13,20 +13,18 @@ find_package(rplidar_sdk_ros2)
 
 # rplidar_listener
 add_executable(rplidar_listener src/rplidar_listener.cpp)
-ament_target_dependencies(
-  rplidar_listener
-  "rclcpp"
-  "sensor_msgs"
+target_link_libraries(rplidar_listener PRIVATE
+  ${rclcpp_TARGETS}
+  ${sensor_msgs_TARGETS}
 )
 install(TARGETS rplidar_listener
   DESTINATION lib/${PROJECT_NAME})
 
 # rplidar_info
 add_executable(rplidar_info src/rplidar_info.cpp)
-ament_target_dependencies(
-  rplidar_info
-  "rclcpp"
-  "rplidar_sdk_ros2"
+target_link_libraries(rplidar_info PRIVATE
+  ${rclcpp_TARGETS}
+  ${rplidar_sdk_ros2_TARGETS}
 )
 install(TARGETS rplidar_info
   DESTINATION lib/${PROJECT_NAME})
