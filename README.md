@@ -73,12 +73,14 @@ ros2 run rviz rviz
 
 ---
 
+![ROS 2](https://img.shields.io/badge/ROS%202-Jazzy%20(Ubuntu%2024.04)-blue?style=flat&logo=ros&logoSize=auto)
 ![C++17](https://img.shields.io/badge/C++-17-green)
-![License](https://img.shields.io/badge/Apache--2.0-orange)
+![License](https://img.shields.io/github/license/RbSCR/rplidar_utilities?label=License)
+[![ROS 2 Builder](https://github.com/RbSCR/rplidar_utilities/actions/workflows/ros2-builder.yml/badge.svg)](https://github.com/RbSCR/rplidar_utilities/actions/workflows/ros2-builder.yml)
 
 Tested with:
 
-![ROS2 Jazzy](https://img.shields.io/badge/ROS2-Jazzy-blue)
 ![RPLIDAR C1](https://img.shields.io/badge/RPLIDAR--C1-green)
+![ROS2 Jazzy](https://img.shields.io/badge/ROS2-Jazzy-blue)
 
 ---
