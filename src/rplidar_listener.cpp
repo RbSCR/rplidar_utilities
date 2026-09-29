@@ -17,7 +17,10 @@
 #include <memory>
 #include <string>
 
-#include "rclcpp/rclcpp.hpp"
+#include "rclcpp/executors.hpp"
+#include "rclcpp/logging.hpp"
+#include "rclcpp/node.hpp"
+
 #include "sensor_msgs/msg/laser_scan.hpp"
 
 #define RAD2DEG(x) ((x) * 180. / M_PI)
