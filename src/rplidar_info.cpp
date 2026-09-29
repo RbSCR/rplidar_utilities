@@ -16,8 +16,9 @@
 #include <signal.h>
 #include <math.h>
 
-#include "rclcpp/rclcpp.hpp"
-
+#include "rclcpp/executors.hpp"
+#include "rclcpp/logging.hpp"
+#include "rclcpp/node.hpp"
 
 using namespace sl;  // NOLINT(*)
 
